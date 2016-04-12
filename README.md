@@ -26,3 +26,12 @@ var ajaxLoader = new DmAjaxLoader('.ajax', {
 	}
 });
 ```
+
+#### API
+
+### Destroy
+
+```javascript
+var ajaxLoader = new DmAjaxLoader('.ajax');
+ajaxLoader.destroy();
+```
