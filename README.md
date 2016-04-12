@@ -1,5 +1,7 @@
 # DM Ajax Loader v1.0.0
 
+This lib allows you to include internal and external files/sources into your html DOM.
+
 ## Usage
 
 ```html
