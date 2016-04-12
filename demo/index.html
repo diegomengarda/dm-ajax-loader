@@ -10,7 +10,12 @@
 	<script src="../src/dm-ajax-loader.js"></script>
 	<script>
 	var ajaxLoader = new DmAjaxLoader('.ajax', {
-		source: 'http://www.diegomengarda.com.br/api/ajax.php'
+		method: 'POST',
+		source: 'http://www.diegomengarda.com.br/api/ajax.php',
+		params: {
+			name: 'test',
+			value: 200
+		}
 	});
 	</script>
 </body>

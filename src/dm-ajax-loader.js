@@ -1,10 +1,10 @@
-var DmAjaxLoader = function (elements, options, params) {
+var DmAjaxLoader = function (elements, options) {
 
     "use strict";
 
     var _$elements = elements || null;
     var _options = options || {};
-    var _params = params || {};
+    var _params = options.params || {};
 
     var _XMLHttpFactories = [
         function () {return new XMLHttpRequest()},
@@ -17,7 +17,7 @@ var DmAjaxLoader = function (elements, options, params) {
         _$elements = document.querySelectorAll(elements);
         if(_$elements.length > 0) {
             [].forEach.call(_$elements, function(element) {
-                var source = _options.source || '';
+                var source = _options.source || (element.getAttribute('data-source') || '');
                 var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
                 if(urlPattern.test(source) === false) {
                     throw "Bad source dude!";
@@ -42,11 +42,18 @@ var DmAjaxLoader = function (elements, options, params) {
     function _sendRequest (url, postData, callback) {
         var xhr = _createXMLHTTPObject();
         if (!xhr) return;
-        var method = _options.type === "POST" ? "POST" : "GET";
+        var method = _options.method === "POST" ? "POST" : "GET";
         xhr.open(method,url,true);
         xhr.setRequestHeader('User-Agent','XMLHTTP/1.0');
-        if (_params !== {})
+        var params = _params;
+        if (_params !== {}) {
             xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+            params = Object.keys(_params).map(function(k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
+            }).join('&');
+        }
+        xhr.setRequestHeader("X-Requested-With","XMLHttpRequest");
+        xhr.setRequestHeader("Access-Control-Allow-Origin","*");
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             if (xhr.status != 200 && xhr.status != 304) {
@@ -56,9 +63,7 @@ var DmAjaxLoader = function (elements, options, params) {
             callback(xhr.response);
         }
         if (xhr.readyState == 4) return;
-        xhr.setRequestHeader("X-Requested-With","XMLHttpRequest");
-        xhr.setRequestHeader("Access-Control-Allow-Origin","*");
-        xhr.send(_params);
+        xhr.send(params);
     }
 
     function _createXMLHTTPObject() {
